@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Karen's Exclusive | Bumbleder ZLH</title>
+    <style>
+        :root {
+            --bg-color: #F8F9FB; /* 極簡淺灰底 */
+            --bumble-yellow: #FFC629; /* Bumble 暖黃 */
+            --verified-blue: #2089DC; /* 認證藍 */
+            --icon-gray: #333333; /* 扁平化圖標深灰 */
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            background-color: var(--bg-color);
+            font-family: -apple-system, system-ui, sans-serif;
+            overflow: hidden; touch-action: none;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- 1. 頂部導覽列 (Bumbleder Header) --- */
+        .bumble-header {
+            position: absolute; top: 0; left: 0; width: 100%; height: 60px;
+            background: white;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+            z-index: 20;
+        }
+
+        .header-title {
+            font-size: 26px; font-weight: 800;
+            color: var(--bumble-yellow);
+            letter-spacing: -1px;
+            text-transform: capitalize;
+        }
+
+        /* --- 2. 卡片容器與照片充满 (Card) --- */
+        .card-container {
+            position: relative; width: 92%; max-width: 370px;
+            height: 75vh; margin-top: 55px; /* 避開 Header */
+            z-index: 5; perspective: 1000px;
+        }
+
+        .card {
+            position: absolute; width: 100%; height: 100%;
+            background: #FFFFFF; border-radius: 20px;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.1);
+            padding: 0; box-sizing: border-box;
+            display: flex; flex-direction: column;
+            cursor: grab; 
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s ease-out;
+            will-change: transform; overflow: hidden;
+            -webkit-user-select: none; user-select: none;
+        }
+
+        /* 高清圖片區域 - 終極 cover 版 */
+        .card-image-wrapper {
+            width: 100%; height: 100%;
+            overflow: hidden;
+            background-color: #f2f2f2;
+            position: relative;
+        }
+
+        .card-image-wrapper img {
+            width: 100%; height: 100%;
+            object-fit: cover; /* 充满，無白邊 */
+            object-position: center center;
+            image-rendering: -webkit-optimize-contrast;
+            pointer-events: none;
+        }
+
+        /* --- 3. 文字資訊區塊 (White Text on Image) --- */
+        .card-info {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 25px 20px; box-sizing: border-box;
+            /* 優化：更柔和的底部漸變 */
+            background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0) 100%); 
+            color: white; text-align: left;
+        }
+
+        .name-age {
+            font-size: 28px; font-weight: 700;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        /* 認證藍勾勾 (SVG - 優化扁平版) */
+        .verified-badge {
+            width: 22px; height: 22px;
+            fill: var(--verified-blue);
+        }
+
+        .card-desc {
+            font-size: 16px; font-weight: 400;
+            margin: 8px 0 0 0;
+            opacity: 0.95;
+            line-height: 1.5;
+            letter-spacing: 0.2px;
+        }
+
+        /* --- 4. 功能按鈕 (Instagram 線條風) --- */
+        .bumble-buttons {
+            position: absolute; bottom: 35px;
+            display: flex; justify-content: center; gap: 40px; width: 100%;
+            z-index: 10;
+        }
+
+        .btn-circle {
+            width: 70px; height: 70px; border-radius: 50%;
+            border: none; /* 移除邊框 */
+            background: white; cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06); /* 更輕量的陰影 */
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-circle:active { transform: scale(0.85); }
+
+        /* 關鍵：改用扁平線條 SVG 圖標 */
+        .btn-icon {
+            width: 32px; height: 32px;
+            fill: none; /* 線條模式 */
+            stroke: var(--icon-gray); /* 扁平灰色 */
+            stroke-width: 2px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* --- 5. 滑動蓋章效果 --- */
+        .stamp {
+            position: absolute; top: 45px; padding: 6px 20px;
+            border: 6px solid; border-radius: 12px;
+            font-size: 44px; font-weight: 900; opacity: 0; z-index: 20;
+            pointer-events: none; text-transform: uppercase;
+        }
+        .stamp-like { left: 45px; color: #4CAF50; border-color: #4CAF50; transform: rotate(-20deg); }
+        .stamp-nope { right: 45px; color: var(--bumble-yellow); border-color: var(--bumble-yellow); transform: rotate(20deg); }
+    </style>
+</head>
+<body>
+
+    <div class="bumble-header">
+        <span class="header-title">Bumbleder</span>
+    </div>
+
+    <div id="cardContainer" class="card-container">
+        </div>
+
+    <div class="bumble-buttons">
+        <button class="btn-circle btn-nope" onclick="swipe('left')">
+            <svg class="btn-icon btn-nope-icon" viewBox="0 0 24 24">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        <button class="btn-circle btn-like" onclick="swipe('right')">
+            <svg class="btn-icon btn-like-icon" viewBox="0 0 24 24">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+        </button>
+    </div>
+
+    <script>
+        // --- 高清 GitHub Raw 連結 (保持高清) ---
+        const lingheImages = [
+            "https://raw.githubusercontent.com/penny13929493-arch/Nonsense-generator/main/IMG_9263.jpeg",
+            "https://raw.githubusercontent.com/penny13929493-arch/Nonsense-generator/main/IMG_9264.jpeg",
+            "https://raw.githubusercontent.com/penny13929493-arch/Nonsense-generator/main/IMG_9265.jpeg",
+            "https://raw.githubusercontent.com/penny13929493-arch/Nonsense-generator/main/IMG_9266.jpeg",
+            "https://raw.githubusercontent.com/penny13929493-arch/Nonsense-generator/main/IMG_9267.jpeg",
+            "https://raw.githubusercontent.com/penny13929493-arch/Nonsense-generator/main/IMG_9268.jpeg",
+            "https://raw.githubusercontent.com/penny13929493-arch/Nonsense-generator/main/IMG_9269.jpeg",
+            "https://raw.githubusercontent.com/penny13929493-arch/Nonsense-generator/main/IMG_9270.jpeg"
+        ];
+
+        // --- 優化：10句不一樣的凌赫風自我介紹 ---
+        const lingheBios = [
+            "撕拉片男神 · 這個 Bug 太高清😘",
+            " Karen 的專屬 Crossover，滑不走的我♥",
+            " Karen 的笑容比我上一個快門還快。",
+            " 188 的傲嬌，只在妳面前高清拉近。",
+            " 撕拉片會糊，但我對妳的偏愛不會。",
+            " 聽說妳喜歡高清？我的顏值 100% 原圖。",
+            " 不要滑走，我的快門還差一個女主角。",
+            " Karen，妳是這場 Nonsense 裡最理性的選擇。",
+            " 雖然我高冷，但這張照片是暖黃色的。",
+            " 妳滑我的時候，有沒有一種心跳的顆粒感？"
+        ];
+
+        const container = document.getElementById('cardContainer');
+        let isDragging = false; let startX = 0; let currentX = 0;
+
+        // 生成新卡片 (優化介面與文案)
+        function createCard() {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            // 隨機抽選照片和文案
+            const imgUrl = lingheImages[Math.floor(Math.random() * lingheImages.length)];
+            const bio = lingheBios[Math.floor(Math.random() * lingheBios.length)];
+            
+            card.innerHTML = `
+                <div class="card-image-wrapper">
+                    <img src="${imgUrl}" alt="張凌赫高清照片">
+                </div>
+                <div class="stamp stamp-like">LIKE</div>
+                <div class="stamp stamp-nope">NOPE</div>
+                <div class="card-info">
+                    <div class="name-age">
+                        <span>張凌赫, 26</span>
+                        <svg class="verified-badge" viewBox="0 0 24 24">
+                            <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm-1.993 15.644-4.707-4.708 1.414-1.414 3.293 3.293 7.293-7.293 1.414 1.414-8.707 8.708z"/>
+                        </svg>
+                    </div>
+                    <p class="card-desc">${bio}</p>
+                </div>`;
+            container.insertBefore(card, container.firstChild);
+            addDragEvents(card);
+        }
+
+        // 穩定、零黏滯的滑動邏輯 (保持原本優良體驗)
+        function addDragEvents(card) {
+            const likeStamp = card.querySelector('.stamp-like');
+            const nopeStamp = card.querySelector('.stamp-nope');
+
+            const startAction = (clientX) => {
+                isDragging = true;
+                startX = clientX;
+                card.style.transition = 'none';
+                card.style.willChange = 'transform';
+            };
+
+            const moveAction = (clientX) => {
+                if (!isDragging) return;
+                currentX = clientX - startX;
+                const rotate = currentX / 16;
+                card.style.transform = `translateX(${currentX}px) rotate(${rotate}deg)`;
+                
+                const opacity = Math.min(Math.abs(currentX) / 120, 1);
+                if (currentX > 0) { likeStamp.style.opacity = opacity; nopeStamp.style.opacity = 0; }
+                else { nopeStamp.style.opacity = opacity; likeStamp.style.opacity = 0; }
+            };
+
+            const onEnd = () => {
+                if (!isDragging) return; isDragging = false;
+                card.style.transition = 'transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s ease-out';
+                if (Math.abs(currentX) > 130) { swipe(currentX > 0 ? 'right' : 'left'); }
+                else { card.style.transform = 'translateX(0) rotate(0)'; likeStamp.style.opacity = 0; nopeStamp.style.opacity = 0; }
+                currentX = 0;
+            };
+
+            // 滑鼠
+            card.addEventListener('mousedown', (e) => startAction(e.clientX));
+            window.addEventListener('mousemove', (e) => moveAction(e.clientX));
+            window.addEventListener('mouseup', onEnd);
+            // 觸摸
+            card.addEventListener('touchstart', (e) => startAction(e.touches[0].clientX), {passive: true});
+            card.addEventListener('touchmove', (e) => { if(isDragging) { moveAction(e.touches[0].clientX); if(e.cancelable) e.preventDefault(); } }, {passive: false});
+            card.addEventListener('touchend', onEnd);
+        }
+
+        function swipe(dir) {
+            const cards = document.querySelectorAll('.card'); if (cards.length === 0) return;
+            const topCard = cards[cards.length - 1];
+            const moveX = dir === 'right' ? window.innerWidth * 1.5 : -window.innerWidth * 1.5;
+            const rotateX = dir === 'right' ? 30 : -30;
+            topCard.style.transform = `translateX(${moveX}px) rotate(${rotateX}deg)`;
+            topCard.style.opacity = '0';
+            setTimeout(() => { topCard.remove(); createCard(); }, 300);
+        }
+        window.onload = () => { for(let i=0; i<4; i++) createCard(); };
+    </script>
+</body>
+</html>
